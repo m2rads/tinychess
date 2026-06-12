@@ -41,7 +41,7 @@ export default function KingIcon({ piece, selected, onClick }) {
         </span>
       ) : (
         <svg
-          viewBox="0 0 45 45"
+          viewBox="0 0 40 40"
           width="72"
           height="72"
           style={{ display: "block" }}
