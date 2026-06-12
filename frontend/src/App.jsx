@@ -5,7 +5,7 @@ import "cm-chessboard/assets/chessboard.css";
 
 const chess = new Chess();
 
-async function fetchBotMove(fen) {
+async function fetchEngineMove(fen) {
   const res = await fetch("/move", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -28,12 +28,18 @@ export default function App() {
 
     board.enableMoveInput((event) => {
       if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
-        return chess.moves({ square: event.squareFrom, verbose: true }).length > 0;
+        return (
+          chess.moves({ square: event.squareFrom, verbose: true }).length > 0
+        );
       }
 
       if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
         try {
-          chess.move({ from: event.squareFrom, to: event.squareTo, promotion: "q" });
+          chess.move({
+            from: event.squareFrom,
+            to: event.squareTo,
+            promotion: "q",
+          });
         } catch {
           return false;
         }
@@ -41,8 +47,12 @@ export default function App() {
         board.setPosition(chess.fen(), true);
 
         if (!chess.isGameOver()) {
-          fetchBotMove(chess.fen()).then((botMove) => {
-            chess.move({ from: botMove.slice(0, 2), to: botMove.slice(2, 4), promotion: botMove[4] || "q" });
+          fetchEngineMove(chess.fen()).then((botMove) => {
+            chess.move({
+              from: botMove.slice(0, 2),
+              to: botMove.slice(2, 4),
+              promotion: botMove[4] || "q",
+            });
             board.setPosition(chess.fen(), true);
           });
         }
