@@ -8,8 +8,9 @@ import { chess, applyUciMove, highlightCheckmatedKing } from "../lib/game";
 import { fetchEngineMove } from "../lib/api";
 import { ASSETS_URL } from "../lib/constants";
 import NavButton from "./NavButton";
+import NameBar from "./NameBar";
 
-export default function Board({ playerColor, onNewGame }) {
+export default function Board({ playerColor, playerName, onNameChange, onNewGame }) {
   const boardRef = useRef(null);
   const chessboardRef = useRef(null);
   // history of FEN positions; viewIndex points at the position shown on the board
@@ -119,7 +120,19 @@ export default function Board({ playerColor, onNewGame }) {
         background: "#1a1a1a",
       }}
     >
-      <div ref={boardRef} style={{ width: "600px", height: "600px" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+        <NameBar
+          name="TinyChess"
+          color={playerColor === "white" ? "black" : "white"}
+        />
+        <div ref={boardRef} style={{ width: "600px", height: "600px" }} />
+        <NameBar
+          name={playerName}
+          color={playerColor}
+          editable
+          onChange={onNameChange}
+        />
+      </div>
       <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
         <NavButton onClick={() => goTo(0)} disabled={atStart}>
           ⏮
