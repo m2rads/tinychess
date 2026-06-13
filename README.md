@@ -2,27 +2,32 @@
 
 Tiny chess engine for learning purposes
 
+Built with fastapi and vanilla react
 
-Built with fastapi and vanila react
-
-to run: 
+## Setup
 
 ```bash
-
-python -m venv .venv
+uv venv .venv
 source .venv/bin/activate
-
-pip install "fastapi[standard]"
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 cd frontend 
 npm install
-
 cd ..
 
 fastapi dev
 ```
 
-Then navigate to 
+Then navigate to http://127.0.0.1:8000/
 
-http://127.0.0.1:8000/
+## Running training scripts interactively (REPL)
+
+The training scripts (e.g. `training/llm.py`) support cell-by-cell execution using `# %%` cell markers, compatible with any Jupyter kernel-based REPL (VS Code, Zed, JupyterLab, etc.).
+
+**Setup:**
+
+```bash
+uv pip install ipykernel
+```
+
+Then in your editor, select the `.venv` Python environment as your kernel and run cells with the editor's REPL shortcut (`shift+enter` in most IDEs).
