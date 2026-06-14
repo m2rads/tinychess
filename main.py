@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 # load the model
 from huggingface_hub import hf_hub_download
-path = hf_hub_download(repo_id="m2rads/tinychess", filename="model_params.pt", revision="main")
+path = hf_hub_download(repo_id="m2rads/tinychess", filename="model_params.pt", revision="v0.0.2")
 checkpoint = torch.load(path, map_location="cpu")
 W1 = checkpoint["W1"]
 b1 = checkpoint["b1"]
