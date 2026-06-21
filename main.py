@@ -7,12 +7,16 @@ from pydantic import BaseModel
 
 # load the model
 from huggingface_hub import hf_hub_download
-path = hf_hub_download(repo_id="m2rads/tinychess", filename="model_params.pt", revision="v0.0.2")
+path = hf_hub_download(repo_id="m2rads/tinychess", filename="model_params.pt", revision="v0.0.5")
 checkpoint = torch.load(path, map_location="cpu")
 W1 = checkpoint["W1"]
-b1 = checkpoint["b1"]
+# b1 = checkpoint["b1"]
 W2 = checkpoint["W2"]
 b2 = checkpoint["b2"]
+bngain = checkpoint["bngain"]
+bnbias = checkpoint["bnbias"]
+bnmean_running = checkpoint["bnmean_running"]
+bnstd_running = checkpoint["bnstd_running"]
 
 # create a map of all possible moves on the board
 all_moves = []
@@ -42,7 +46,8 @@ def predict_next_move(request: MoveRequest):
     board = chess.Board(request.fen)
     x = encode_board(board).unsqueeze(0)
     with torch.no_grad():
-        preact = F.conv2d(x, W1, b1, stride=1, padding=1)
+        preact = F.conv2d(x, W1, bias=None, stride=1, padding=1)
+        preact = bngain * (preact - bnmean_running) / bnstd_running + bnbias
         r = torch.relu(preact)
         r = r.flatten(start_dim=1)
         logits = r @ W2 + b2
