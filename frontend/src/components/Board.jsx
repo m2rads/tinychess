@@ -111,6 +111,8 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
   const atStart = nav.index === 0;
   const atLatest = nav.index === nav.length - 1;
 
+  const boardSize = "min(92vw, 600px)";
+
   return (
     <div
       style={{
@@ -119,11 +121,13 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: "1.5rem",
+        gap: "1rem",
         background: "#1a1a1a",
+        padding: "1rem",
+        boxSizing: "border-box",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", width: boardSize }}>
         <NameBar
           name="TinyChess"
           color={playerColor === "white" ? "black" : "white"}
@@ -133,7 +137,7 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
           pieceColor={playerColor === "white" ? "w" : "b"}
           advantage={playerColor === "white" ? Math.max(0, -captured.advantage) : Math.max(0, captured.advantage)}
         />
-        <div ref={boardRef} style={{ width: "600px", height: "600px" }} />
+        <div ref={boardRef} style={{ width: boardSize, height: boardSize }} />
         <CapturedPieces
           pieces={playerColor === "white" ? captured.capturedByWhite : captured.capturedByBlack}
           pieceColor={playerColor === "white" ? "b" : "w"}
@@ -146,24 +150,15 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
           onChange={onNameChange}
         />
       </div>
-      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-        <NavButton onClick={() => goTo(0)} disabled={atStart}>
-          ⏮
-        </NavButton>
-        <NavButton onClick={() => goTo(nav.index - 1)} disabled={atStart}>
-          ◀
-        </NavButton>
-        <NavButton onClick={() => goTo(nav.index + 1)} disabled={atLatest}>
-          ▶
-        </NavButton>
-        <NavButton onClick={() => goTo(nav.length - 1)} disabled={atLatest}>
-          ⏭
-        </NavButton>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+        <NavButton onClick={() => goTo(0)} disabled={atStart}>⏮</NavButton>
+        <NavButton onClick={() => goTo(nav.index - 1)} disabled={atStart}>◀</NavButton>
+        <NavButton onClick={() => goTo(nav.index + 1)} disabled={atLatest}>▶</NavButton>
+        <NavButton onClick={() => goTo(nav.length - 1)} disabled={atLatest}>⏭</NavButton>
         <button
           onClick={onNewGame}
           style={{
-            marginLeft: "1rem",
-            padding: "0.6rem 2rem",
+            padding: "0.75rem 2rem",
             fontSize: "1rem",
             fontWeight: "600",
             background: "#fff",
@@ -171,6 +166,7 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
             border: "none",
             borderRadius: "6px",
             cursor: "pointer",
+            minHeight: "44px",
           }}
         >
           New Game

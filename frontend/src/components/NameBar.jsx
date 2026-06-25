@@ -13,7 +13,7 @@ export default function NameBar({ name, color, editable, onChange }) {
   return (
     <div
       style={{
-        width: "600px",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         gap: "0.6rem",
