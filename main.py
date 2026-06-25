@@ -94,7 +94,7 @@ layers = [
     Linear(2048, all_moves_size, bias=True),
 ]
 
-lossi = load_model(layers, version="v0.0.8", device="cpu", training=False)
+lossi = load_model(layers, version="v0.0.9", device="cpu", training=False)
 print(lossi[-1])
 
 def encode_board(board):
