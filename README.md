@@ -1,8 +1,11 @@
 # TinyChess 
 
-Tiny chess engine for learning purposes
+Tiny chess engine for learning purposes using conv2d
 
-Built with fastapi and vanilla react
+## Link to the Kaggle Notebook
+https://www.kaggle.com/code/m2rads/tinychess?scriptVersionId=330189406
+
+Weights: https://huggingface.co/m2rads/tinychess/tree/main 
 
 ## Setup
 
