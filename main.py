@@ -1,3 +1,4 @@
+import os
 import chess
 import math
 import torch
@@ -5,7 +6,6 @@ import torch.nn.functional as F
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from huggingface_hub import hf_hub_download
 
 class Linear:
     def __init__(self, fan_in, fan_out, bias=True):
@@ -57,9 +57,14 @@ class Flatten:
         self.out = x.flatten(start_dim=1)
         return self.out
 
-def load_model(layers, version, repo_id="m2rads/tinychess", device="cpu", training=False):
-    path = hf_hub_download(repo_id=repo_id, filename="model_params.pt", revision=version)
-    checkpoint = torch.load(path, map_location=device)
+def load_model(layers, device="cpu", training=False):
+    local_path = os.environ.get("MODEL_PATH")
+    if local_path:
+        checkpoint = torch.load(local_path, map_location=device)
+    else:
+        from huggingface_hub import hf_hub_download
+        path = hf_hub_download(repo_id="m2rads/tinychess", filename="model_params.pt", revision="v0.0.9")
+        checkpoint = torch.load(path, map_location=device)
     for layer, ls in zip(layers, checkpoint["layers"]):
         if "weight" in ls: layer.weight = ls["weight"].to(device)
         if "bias" in ls: layer.bias = ls["bias"].to(device)
@@ -94,7 +99,7 @@ layers = [
     Linear(2048, all_moves_size, bias=True),
 ]
 
-lossi = load_model(layers, version="v0.0.9", device="cpu", training=False)
+lossi = load_model(layers, device="cpu", training=False)
 print(lossi[-1])
 
 def encode_board(board):
