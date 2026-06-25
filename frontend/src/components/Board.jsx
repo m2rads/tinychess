@@ -4,11 +4,12 @@ import { Markers } from "cm-chessboard/src/extensions/markers/Markers.js";
 import "cm-chessboard/assets/chessboard.css";
 import "cm-chessboard/assets/extensions/markers/markers.css";
 
-import { chess, applyUciMove, highlightCheckmatedKing } from "../lib/game";
+import { chess, applyUciMove, highlightCheckmatedKing, getCapturedPieces } from "../lib/game";
 import { fetchEngineMove } from "../lib/api";
 import { ASSETS_URL } from "../lib/constants";
 import NavButton from "./NavButton";
 import NameBar from "./NameBar";
+import CapturedPieces from "./CapturedPieces";
 
 export default function Board({ playerColor, playerName, onNameChange, onNewGame }) {
   const boardRef = useRef(null);
@@ -17,12 +18,14 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
   const historyRef = useRef([]);
   const viewIndexRef = useRef(0);
   const [nav, setNav] = useState({ index: 0, length: 1 });
+  const [captured, setCaptured] = useState({ capturedByWhite: [], capturedByBlack: [], advantage: 0 });
   const orientation = playerColor === "white" ? COLOR.white : COLOR.black;
 
   const pushPosition = useCallback(() => {
     historyRef.current.push(chess.fen());
     viewIndexRef.current = historyRef.current.length - 1;
     setNav({ index: viewIndexRef.current, length: historyRef.current.length });
+    setCaptured(getCapturedPieces(chess));
   }, []);
 
   const goTo = useCallback((index) => {
@@ -120,12 +123,22 @@ export default function Board({ playerColor, playerName, onNameChange, onNewGame
         background: "#1a1a1a",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
         <NameBar
           name="TinyChess"
           color={playerColor === "white" ? "black" : "white"}
         />
+        <CapturedPieces
+          pieces={playerColor === "white" ? captured.capturedByBlack : captured.capturedByWhite}
+          pieceColor={playerColor === "white" ? "w" : "b"}
+          advantage={playerColor === "white" ? Math.max(0, -captured.advantage) : Math.max(0, captured.advantage)}
+        />
         <div ref={boardRef} style={{ width: "600px", height: "600px" }} />
+        <CapturedPieces
+          pieces={playerColor === "white" ? captured.capturedByWhite : captured.capturedByBlack}
+          pieceColor={playerColor === "white" ? "b" : "w"}
+          advantage={playerColor === "white" ? Math.max(0, captured.advantage) : Math.max(0, -captured.advantage)}
+        />
         <NameBar
           name={playerName}
           color={playerColor}
